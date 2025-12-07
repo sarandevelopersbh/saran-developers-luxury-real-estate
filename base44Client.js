@@ -1,29 +1,63 @@
-// --- BASE44 SDK REMOVED FOR STATIC HOSTING ---
-// We replaced the real SDK with this "Mock" object.
-// This prevents the redirect loop and allows the site to load on Vercel.
+// 🛑 BASE44 DEPENDENCY REMOVED: Running in standalone, static mode.
+// This is the complete mock client to bypass all SDK dependencies.
 
-console.log("Base44 SDK bypassed: Running in static mode");
+console.log("BASE44 MOCK ACTIVE: All backend and integration calls are inert.");
 
+// --- Core Mocking Functions ---
+// Used for asynchronous calls (API, DB, LLM)
+const asyncNoOp = async () => null;
+// Used for synchronous functions/getters
+const syncNoOp = () => ({}); 
+
+// Helper interface for database/entity calls (list, get, etc.)
+const mockCollectionInterface = {
+    list: async () => [], // Returns an empty array for data lists
+    get: asyncNoOp,
+    create: asyncNoOp,
+    update: asyncNoOp,
+    delete: asyncNoOp,
+};
+
+
+// The exported object that mimics the full Base44 SDK structure
 export const base44 = {
-  // If the app tries to fetch data (like sermons/events), 
-  // we return empty lists instead of crashing.
-  collection: (collectionName) => ({
-    list: async () => [],
-    get: async () => ({}),
-    create: async () => ({}),
-    update: async () => ({}),
-    delete: async () => ({}),
-  }),
+  // 1. Database/Collection Mock
+  collection: (collectionName) => mockCollectionInterface,
   
-  // If the app tries to get an image URL
+  // 2. Storage/File Mock
   storage: {
-    getUrl: () => ""
+    getUrl: () => "",
+    upload: asyncNoOp,
+    delete: asyncNoOp,
   },
 
-  // If the app checks for a logged-in user
+  // 3. Authentication Mock
   auth: {
-    getUser: async () => null,
-    signIn: async () => {},
-    signOut: async () => {}
+    getUser: asyncNoOp,
+    signIn: asyncNoOp,
+    signOut: asyncNoOp,
+    onAuthStateChanged: syncNoOp, 
+  },
+
+  // 4. Entities Mock (for entities.js)
+  entities: {
+    Project: mockCollectionInterface,
+    Post: mockCollectionInterface,
+    Testimonial: mockCollectionInterface,
+  },
+  
+  // 5. Integrations Mock (for integrations.js)
+  integrations: {
+    Core: {
+        // Mock all properties accessed by integrations.js
+        InvokeLLM: asyncNoOp,
+        SendEmail: asyncNoOp,
+        UploadFile: asyncNoOp,
+        GenerateImage: asyncNoOp,
+        ExtractDataFromUploadedFile: asyncNoOp,
+        CreateFileSignedUrl: asyncNoOp,
+        UploadPrivateFile: asyncNoOp,
+    },
+    // If your app imports other top-level integrations, they go here.
   }
 };
