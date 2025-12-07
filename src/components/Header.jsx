@@ -17,11 +17,12 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-const navLinks = [
+  // DEFINITIVE MENU ITEMS
+  const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Portfolio', path: 'Portfolio' }, // Will resolve to /portfolio
-    { name: 'Insights', path: 'Insights' },   // Will resolve to /insights
-    { name: 'Contact', path: 'Contact' },     // Added contact here for mobile menu fix
+    { name: 'Portfolio', path: 'Portfolio' },
+    { name: 'Insights', path: 'Insights' },
+    { name: 'Contact', path: 'Contact', isButton: true }, // Added isButton flag for styling
   ];
 
   return (
@@ -31,19 +32,24 @@ const navLinks = [
           Saran Developers
         </Link>
 
-{/* Desktop Nav */}
-    <nav className="hidden md:flex space-x-8 items-center">
-      {navLinks.map((link) => (
-        {/* ... existing map code ... */}
-      ))}
-      {/* ⚠️ DELETE THIS BLOCK IF YOU ADDED CONTACT TO navLinks: */}
-      <Link 
-        to={createPageUrl('Contact')}
-        className="border border-white px-6 py-2 text-sm tracking-widest uppercase transition-all hover:bg-amber-600 hover:border-amber-600 hover:text-white text-white"
-      >
-        Contact
-      </Link>
-    </nav>
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex space-x-8 items-center">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.path === '/' ? '/' : createPageUrl(link.path)}
+              className={link.isButton
+                ? "border border-white px-6 py-2 text-sm tracking-widest uppercase transition-all hover:bg-amber-600 hover:border-amber-600 hover:text-white text-white"
+                : `text-sm font-medium tracking-widest uppercase transition-colors hover:text-amber-600 ${
+                  location.pathname === link.path || (link.path !== '/' && location.pathname.includes(link.path.toLowerCase()))
+                    ? 'text-amber-600' 
+                    : 'text-white/90'
+                }`}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
 
         {/* Mobile Menu Button */}
         <button 
@@ -68,19 +74,14 @@ const navLinks = [
                 <Link
                   key={link.name}
                   to={link.path === '/' ? '/' : createPageUrl(link.path)}
-                  className="text-neutral-900 font-medium tracking-widest uppercase"
+                  className={link.isButton
+                    ? "border border-neutral-900 text-neutral-900 px-6 py-2 text-sm tracking-widest uppercase w-full text-center"
+                    : "text-neutral-900 font-medium tracking-widest uppercase"}
                   onClick={() => setIsOpen(false)}
                 >
                   {link.name}
                 </Link>
               ))}
-              <Link 
-                to={createPageUrl('Contact')}
-                className="border border-neutral-900 text-neutral-900 px-6 py-2 text-sm tracking-widest uppercase w-full text-center"
-                onClick={() => setIsOpen(false)}
-              >
-                Contact
-              </Link>
             </nav>
           </motion.div>
         )}

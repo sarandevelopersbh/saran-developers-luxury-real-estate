@@ -39,16 +39,17 @@ export const base44 = {
     onAuthStateChanged: syncNoOp, 
   },
 
-  // 4. Entities Mock
+  // 4. Entities Mock (for entities.js)
   entities: {
     Project: mockCollectionInterface,
     Post: mockCollectionInterface,
     Testimonial: mockCollectionInterface,
   },
   
-  // 5. Integrations Mock
+  // 5. Integrations Mock (for integrations.js)
   integrations: {
     Core: {
+        // Mock all properties accessed by integrations.js
         InvokeLLM: asyncNoOp,
         SendEmail: asyncNoOp,
         UploadFile: asyncNoOp,
@@ -57,5 +58,6 @@ export const base44 = {
         CreateFileSignedUrl: asyncNoOp,
         UploadPrivateFile: asyncNoOp,
     },
+    // If your app imports other top-level integrations, they go here.
   }
 };
